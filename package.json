@@ -1,0 +1,30 @@
+{
+  "name": "@urcloud/jsonapi-normalizer",
+  "version": "1.0.0",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "author": "换个头像心好累",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "keywords": [
+    "jsonapi-normalizer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zenonux/jsonapi-normalizer"
+  },
+  "homepage": "https://github.com/zenonux/jsonapi-normalizer#readme",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.1",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.5",
+    "vue-tsc": "^0.34.7"
+  },
+  "license": "MIT"
+}
