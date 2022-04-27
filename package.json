@@ -1,6 +1,6 @@
 {
   "name": "@urcloud/jsonapi-normalizer",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "transform jsonapi response data into normal rest api.",
   "publishConfig": {
     "access": "public"
