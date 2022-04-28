@@ -15,7 +15,7 @@ var __spreadValues = (a, b) => {
   return a;
 };
 class JsonapiNormalizer {
-  static transform(response) {
+  static deserialize(response) {
     let { data, included, meta, links } = response;
     let normalizedData = {};
     let includedMap = included && included.length > 0 ? getIncludedMap(included) : null;

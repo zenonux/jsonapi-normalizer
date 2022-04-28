@@ -27,7 +27,7 @@ type NormalizedResponse = {
 }
 
 export default class JsonapiNormalizer {
-  static transform(response: JsonapiResponse): NormalizedResponse {
+  static deserialize(response: JsonapiResponse): NormalizedResponse {
     let { data, included, meta, links } = response
     let normalizedData = {}
     let includedMap =

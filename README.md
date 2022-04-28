@@ -12,5 +12,5 @@ npm i @urcloud/jsonapi-normalizer -S
 
 ```js
 import JsonapiNormalizer from '@urcloud/jsonapi-normalizer'
-const data = JsonapiNormalizer.transform(jsonapiData)
+const data = JsonapiNormalizer.deserialize(jsonapiData)
 ```
