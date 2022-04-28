@@ -1,6 +1,6 @@
 # jsonapi-normalizer
 
-Utility to normalize JSON API data for restful applications.
+Utility to normalize JSON API data.
 
 ## Install
 
