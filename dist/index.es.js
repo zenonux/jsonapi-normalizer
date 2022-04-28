@@ -18,7 +18,7 @@ class JsonapiNormalizer {
   static transform(response) {
     let { data, included, meta, links } = response;
     let normalizedData = {};
-    let includedMap = included.length > 0 ? getIncludedMap(included) : null;
+    let includedMap = included && included.length > 0 ? getIncludedMap(included) : null;
     if (Array.isArray(data)) {
       normalizedData = data.map((v) => jsonapiToNormItem(v, includedMap));
     } else {
