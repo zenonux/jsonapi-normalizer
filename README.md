@@ -1,6 +1,6 @@
 # jsonapi-normalizer
 
-transform jsonapi response data into normal rest api.
+Utility to normalize JSON API data for restful applications.
 
 ## Install
 
