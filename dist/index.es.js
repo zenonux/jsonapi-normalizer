@@ -18,10 +18,11 @@ class JsonapiNormalizer {
   static transform(response) {
     let { data, included, meta, links } = response;
     let normalizedData = {};
+    let includedMap = included.length > 0 ? getIncludedMap(included) : null;
     if (Array.isArray(data)) {
-      normalizedData = data.map((v) => jsonapiToNormItem(v, included));
+      normalizedData = data.map((v) => jsonapiToNormItem(v, includedMap));
     } else {
-      normalizedData = jsonapiToNormItem(data, included);
+      normalizedData = jsonapiToNormItem(data, includedMap);
     }
     return {
       data: normalizedData,
@@ -30,37 +31,31 @@ class JsonapiNormalizer {
     };
   }
 }
-function jsonapiToNormItem(item, included) {
-  if (!item) {
-    return {};
-  }
+function jsonapiToNormItem(item, includedMap) {
   let newItem = __spreadValues({
     id: item.id
   }, item.attributes);
-  if (item.relationships) {
+  if (item.relationships && includedMap) {
     let relatedKeys = Object.keys(item.relationships).map((key) => {
       return {
         property: key,
         data: item.relationships[key].data
       };
     }).filter((v) => !Array.isArray(v.data) || v.data.length > 0);
-    let newProps = getRelatedItem(included, relatedKeys);
+    let newProps = getRelatedItem(includedMap, relatedKeys);
     Object.keys(newProps).forEach((v) => {
       newItem[v] = newProps[v];
     });
   }
   return newItem;
 }
-function getRelatedItem(included, keys) {
-  let map = getIncludedMap(included);
+function getRelatedItem(map, keys) {
   let props = {};
   Object.keys(keys).forEach((k) => {
     if (Array.isArray(keys[k].data)) {
+      props[keys[k].property] = [];
       keys[k].data.forEach((v) => {
         let mapKey = v.type + "_" + v.id;
-        if (!props[keys[k].property]) {
-          props[keys[k].property] = [];
-        }
         props[keys[k].property].push(map[mapKey]);
         setIncluedRelationships(mapKey, map);
       });

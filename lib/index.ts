@@ -30,10 +30,11 @@ export default class JsonapiNormalizer {
   static transform(response: JsonapiResponse): NormalizedResponse {
     let { data, included, meta, links } = response
     let normalizedData = {}
+    let includedMap = included.length>0 ? getIncludedMap(included) : null
     if (Array.isArray(data)) {
-      normalizedData = data.map((v) => jsonapiToNormItem(v, included))
+      normalizedData = data.map((v) => jsonapiToNormItem(v, includedMap))
     } else {
-      normalizedData = jsonapiToNormItem(data, included)
+      normalizedData = jsonapiToNormItem(data, includedMap)
     }
     return {
       data: normalizedData,
@@ -45,7 +46,7 @@ export default class JsonapiNormalizer {
 
 function jsonapiToNormItem(
   item: DataIncluedItem,
-  included: DataIncluedItem[]
+  includedMap:Record<string,any> | null
 ): NormalizedDataItem {
   let newItem = {
     // 注意不要有id冲突的问题
@@ -53,7 +54,7 @@ function jsonapiToNormItem(
     //移除非必要的type属性
     ...item.attributes,
   }
-  if (item.relationships) {
+  if (item.relationships && includedMap) {
     let relatedKeys = Object.keys(item.relationships)
       .map((key) => {
         return {
@@ -62,7 +63,7 @@ function jsonapiToNormItem(
         }
       })
       .filter((v) => !Array.isArray(v.data) || v.data.length > 0)
-    let newProps = getRelatedItem(included, relatedKeys)
+    let newProps = getRelatedItem(includedMap, relatedKeys)
     Object.keys(newProps).forEach((v) => {
       newItem[v] = newProps[v]
     })
@@ -76,9 +77,7 @@ type RelatedKey = {
 }
 
 // 仅实现included下一层relationships,data下一层relationships
-function getRelatedItem(included: DataIncluedItem[], keys: RelatedKey[]) {
-  let map = getIncludedMap(included)
-
+function getRelatedItem(map: Record<string,any>, keys: RelatedKey[]) {
   let props: Record<string, any> = {}
   Object.keys(keys).forEach((k) => {
     if (Array.isArray(keys[k].data)) {
