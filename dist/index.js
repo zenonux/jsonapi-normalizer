@@ -1,22 +1,34 @@
+"use strict";
 var __defProp = Object.defineProperty;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
-class JsonapiNormalizer {
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  default: () => JsonapiNormalizer
+});
+module.exports = __toCommonJS(src_exports);
+var JsonapiNormalizer = class {
   static deserialize(response) {
-    let { data, included, meta, links } = response;
+    let { data, included, meta, links, errors } = response;
+    if (errors) {
+      return response;
+    }
     let normalizedData = {};
     let includedMap = included && included.length > 0 ? getIncludedMap(included) : null;
     if (Array.isArray(data)) {
@@ -30,16 +42,18 @@ class JsonapiNormalizer {
       links
     };
   }
-}
+};
 function jsonapiToNormItem(item, includedMap) {
-  let newItem = __spreadValues({
-    id: item.id
-  }, item.attributes);
-  if (item.relationships && includedMap) {
-    let relatedKeys = Object.keys(item.relationships).map((key) => {
+  let newItem = {
+    id: item.id,
+    ...item.attributes
+  };
+  let relationships = item.relationships || {};
+  if (relationships && includedMap) {
+    let relatedKeys = Object.keys(relationships).map((key) => {
       return {
         property: key,
-        data: item.relationships[key].data
+        data: relationships[key].data
       };
     }).filter((v) => !Array.isArray(v.data) || v.data.length > 0);
     let newProps = getRelatedItem(includedMap, relatedKeys);
@@ -89,12 +103,14 @@ function getIncludedMap(included) {
   for (let i = 0; i < included.length; i++) {
     let item = included[i];
     let key = item.type + "_" + item.id;
-    map[key] = __spreadValues({
-      id: item.id
-    }, item.attributes);
-    if (item.relationships) {
-      Object.keys(item.relationships).forEach((k) => {
-        let v = item.relationships[k].data;
+    map[key] = {
+      id: item.id,
+      ...item.attributes
+    };
+    let relationships = item.relationships || {};
+    if (relationships) {
+      Object.keys(relationships).forEach((k) => {
+        let v = relationships[k].data;
         map[key]._relationships = map[key]._relationships || {};
         if (Array.isArray(v)) {
           map[key]._relationships[k] = [];
@@ -109,4 +125,5 @@ function getIncludedMap(included) {
   }
   return map;
 }
-export { JsonapiNormalizer as default };
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {});
