@@ -23,10 +23,22 @@ __export(src_exports, {
   default: () => JsonapiNormalizer
 });
 module.exports = __toCommonJS(src_exports);
+function isJsonApiResponse(response) {
+  if (!response.data || response.errors) {
+    return false;
+  }
+  if (response.data instanceof Array && response.data[0] && response.data[0].attributes) {
+    return true;
+  }
+  if (response.data instanceof Object && response.data.attributes) {
+    return true;
+  }
+  return false;
+}
 var JsonapiNormalizer = class {
   static deserialize(response) {
-    let { data, included, meta, links, errors } = response;
-    if (errors) {
+    let { data, included, meta, links } = response;
+    if (!isJsonApiResponse(response)) {
       return response;
     }
     let normalizedData = {};

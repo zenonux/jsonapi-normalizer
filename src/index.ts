@@ -27,10 +27,23 @@ type NormalizedResponse = {
   links?: Record<string, any>;
 };
 
+function isJsonApiResponse(response: any) {
+  if (!response.data || response.errors) {
+    return false;
+  }
+  if (response.data instanceof Array && response.data[0] && response.data[0].attributes) {
+    return true;
+  }
+  if (response.data instanceof Object && response.data.attributes) {
+    return true
+  }
+  return false
+}
+
 export default class JsonapiNormalizer {
   static deserialize(response: JsonapiResponse): NormalizedResponse {
-    let { data, included, meta, links, errors } = response;
-    if (errors) {
+    let { data, included, meta, links } = response;
+    if (!isJsonApiResponse(response)) {
       return response;
     }
     let normalizedData = {};
@@ -53,7 +66,7 @@ function jsonapiToNormItem(
   item: DataIncluedItem,
   includedMap: Record<string, any> | null
 ): NormalizedDataItem {
-  let newItem:Record<string,any> = {
+  let newItem: Record<string, any> = {
     // 注意不要有id冲突的问题
     id: item.id,
     //移除非必要的type属性
@@ -108,7 +121,7 @@ function setIncluedRelationships(mapKey: string, map: Record<string, any>) {
     Object.keys(mapValue._relationships).forEach((k) => {
       if (Array.isArray(mapValue._relationships[k])) {
         mapValue[k] = [];
-        mapValue._relationships[k].forEach((v:any) => {
+        mapValue._relationships[k].forEach((v: any) => {
           mapValue[k].push(map[v]);
         });
       } else {
