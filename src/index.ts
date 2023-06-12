@@ -117,7 +117,7 @@ function getRelatedItem(map: Record<string, any>, keys: RelatedKey[]) {
 
 function setIncluedRelationships(mapKey: string, map: Record<string, any>) {
   let mapValue = map[mapKey];
-  if (mapValue._relationships) {
+  if (mapValue && mapValue._relationships) {
     Object.keys(mapValue._relationships).forEach((k) => {
       if (Array.isArray(mapValue._relationships[k])) {
         mapValue[k] = [];

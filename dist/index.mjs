@@ -71,7 +71,7 @@ function getRelatedItem(map, keys) {
 }
 function setIncluedRelationships(mapKey, map) {
   let mapValue = map[mapKey];
-  if (mapValue._relationships) {
+  if (mapValue && mapValue._relationships) {
     Object.keys(mapValue._relationships).forEach((k) => {
       if (Array.isArray(mapValue._relationships[k])) {
         mapValue[k] = [];
