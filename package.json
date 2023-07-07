@@ -1,12 +1,17 @@
 {
   "name": "@urcloud/jsonapi-normalizer",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "transform jsonapi response data into normal rest api.",
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "author": "换个头像心好累",
   "scripts": {
     "dev": "vite",
